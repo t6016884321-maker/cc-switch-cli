@@ -204,7 +204,24 @@ pub(crate) const FENNO: SponsorProviderPreset = SponsorProviderPreset {
     hermes_base_url: "https://api.fenno.ai/v1",
 };
 
-pub(crate) const SPONSOR_PROVIDER_PRESETS: [SponsorProviderPreset; 11] = [
+pub(crate) const VIDAI: SponsorProviderPreset = SponsorProviderPreset {
+    id: "vidai",
+    provider_name: "VidAI",
+    chip_label: "* VidAI",
+    website_url: "https://api.david-ai.net",
+    register_url: "https://api.david-ai.net/register?aff=5SM2BCS7ML2H&utm_source=cc_switch_cli&utm_medium=provider_preset&utm_campaign=tool_distribution_202610&utm_content=register",
+    promo_code: "",
+    partner_promotion_key: "vidai",
+    claude_api_key_field: ClaudeApiKeyField::AuthToken,
+    claude_base_url: "https://api.david-ai.net",
+    codex_base_url: "https://api.david-ai.net/v1",
+    gemini_base_url: "",
+    opencode_base_url: "",
+    openclaw_base_url: "",
+    hermes_base_url: "",
+};
+
+pub(crate) const SPONSOR_PROVIDER_PRESETS: [SponsorProviderPreset; 12] = [
     API88,
     PATEWAY_AI,
     CUBENCE,
@@ -216,9 +233,10 @@ pub(crate) const SPONSOR_PROVIDER_PRESETS: [SponsorProviderPreset; 11] = [
     CLAUDE_API,
     QINIU,
     FENNO,
+    VIDAI,
 ];
 
-const CLAUDE_SPONSOR_PRESETS: [SponsorProviderPreset; 11] = [
+const CLAUDE_SPONSOR_PRESETS: [SponsorProviderPreset; 12] = [
     API88,
     PATEWAY_AI,
     CUBENCE,
@@ -230,8 +248,9 @@ const CLAUDE_SPONSOR_PRESETS: [SponsorProviderPreset; 11] = [
     CLAUDE_API,
     QINIU,
     FENNO,
+    VIDAI,
 ];
-const CODEX_SPONSOR_PRESETS: [SponsorProviderPreset; 10] = [
+const CODEX_SPONSOR_PRESETS: [SponsorProviderPreset; 11] = [
     API88,
     PATEWAY_AI,
     CUBENCE,
@@ -242,6 +261,7 @@ const CODEX_SPONSOR_PRESETS: [SponsorProviderPreset; 10] = [
     AI_CODE_MIRROR,
     QINIU,
     FENNO,
+    VIDAI,
 ];
 const GEMINI_SPONSOR_PRESETS: [SponsorProviderPreset; 6] =
     [API88, CUBENCE, OPENMODEL, PACKY_CODE, AI_CODE_MIRROR, QINIU];
@@ -353,6 +373,19 @@ mod tests {
         assert!(PATEWAY_AI.opencode_base_url.is_empty());
         assert!(PATEWAY_AI.hermes_base_url.is_empty());
         assert!(PATEWAY_AI.openclaw_base_url.is_empty());
+    }
+
+    #[test]
+    fn vidai_is_limited_to_verified_claude_and_codex_endpoints() {
+        assert_eq!(VIDAI.website_url, "https://api.david-ai.net");
+        assert!(VIDAI.register_url.contains("utm_source=cc_switch_cli"));
+        assert_eq!(VIDAI.claude_api_key_field, ClaudeApiKeyField::AuthToken);
+        assert_eq!(VIDAI.claude_base_url, "https://api.david-ai.net");
+        assert_eq!(VIDAI.codex_base_url, "https://api.david-ai.net/v1");
+        assert!(VIDAI.gemini_base_url.is_empty());
+        assert!(VIDAI.opencode_base_url.is_empty());
+        assert!(VIDAI.hermes_base_url.is_empty());
+        assert!(VIDAI.openclaw_base_url.is_empty());
     }
 
     #[test]

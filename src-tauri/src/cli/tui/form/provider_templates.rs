@@ -753,6 +753,10 @@ impl ProviderAddFormState {
                 obj.insert("category".to_string(), json!("aggregator"));
                 obj.insert("icon".to_string(), json!("fenno"));
             }
+        } else if preset.id == "vidai" {
+            if let Some(obj) = extra.as_object_mut() {
+                obj.insert("category".to_string(), json!("aggregator"));
+            }
         }
         self.extra = extra;
         self.name.set(preset.provider_name);

@@ -45,6 +45,7 @@ pub enum ProviderAddTemplate {
     Claudeapi,
     Qiniu,
     Fenno,
+    Vidai,
     Deepseek,
 }
 
@@ -67,6 +68,7 @@ impl ProviderAddTemplate {
             Self::Dds => "dds",
             Self::Qiniu => "qiniu",
             Self::Fenno => "fenno",
+            Self::Vidai => "vidai",
             Self::Deepseek => "deepseek",
         }
     }
@@ -89,6 +91,7 @@ impl ProviderAddTemplate {
                 | Self::Dds
                 | Self::Qiniu
                 | Self::Fenno
+                | Self::Vidai
                 | Self::Deepseek
         )
     }
@@ -252,6 +255,7 @@ fn sponsor_template_from_id(id: &str) -> ProviderAddTemplate {
         "dds" => ProviderAddTemplate::Dds,
         "qiniu" => ProviderAddTemplate::Qiniu,
         "fenno" => ProviderAddTemplate::Fenno,
+        "vidai" => ProviderAddTemplate::Vidai,
         _ => unreachable!("unknown shared sponsor preset: {id}"),
     }
 }
@@ -360,7 +364,8 @@ fn template_default_name(template: ProviderAddTemplate) -> Result<&'static str, 
         | ProviderAddTemplate::Openmodel
         | ProviderAddTemplate::Dds
         | ProviderAddTemplate::Qiniu
-        | ProviderAddTemplate::Fenno => sponsor_preset(template)
+        | ProviderAddTemplate::Fenno
+        | ProviderAddTemplate::Vidai => sponsor_preset(template)
             .map(|preset| preset.provider_name)
             .ok_or_else(|| unsupported_template_error(template))?,
         ProviderAddTemplate::Custom => return Err(unsupported_template_error(template)),
@@ -384,7 +389,8 @@ fn template_default_website_url(template: ProviderAddTemplate) -> Option<&'stati
         | ProviderAddTemplate::Openmodel
         | ProviderAddTemplate::Dds
         | ProviderAddTemplate::Qiniu
-        | ProviderAddTemplate::Fenno => sponsor_preset(template).map(|preset| preset.website_url),
+        | ProviderAddTemplate::Fenno
+        | ProviderAddTemplate::Vidai => sponsor_preset(template).map(|preset| preset.website_url),
         ProviderAddTemplate::Custom => None,
     }
 }
@@ -399,7 +405,8 @@ fn template_default_category(template: ProviderAddTemplate) -> Option<&'static s
         ProviderAddTemplate::Runapi
         | ProviderAddTemplate::Openmodel
         | ProviderAddTemplate::Qiniu
-        | ProviderAddTemplate::Fenno => Some("aggregator"),
+        | ProviderAddTemplate::Fenno
+        | ProviderAddTemplate::Vidai => Some("aggregator"),
         ProviderAddTemplate::Custom
         | ProviderAddTemplate::CodexOauth
         | ProviderAddTemplate::Claudeapi
@@ -449,7 +456,8 @@ fn template_default_meta(
         | ProviderAddTemplate::Openmodel
         | ProviderAddTemplate::Dds
         | ProviderAddTemplate::Qiniu
-        | ProviderAddTemplate::Fenno => sponsor_preset(template).map(|preset| {
+        | ProviderAddTemplate::Fenno
+        | ProviderAddTemplate::Vidai => sponsor_preset(template).map(|preset| {
             let mut meta = ProviderMeta {
                 is_partner: Some(true),
                 partner_promotion_key: Some(preset.partner_promotion_key.to_string()),
@@ -476,6 +484,7 @@ fn template_default_icon(template: ProviderAddTemplate) -> Option<&'static str> 
         ProviderAddTemplate::Runapi => Some("runapi"),
         ProviderAddTemplate::Qiniu => Some("qiniu"),
         ProviderAddTemplate::Fenno => Some("fenno"),
+        ProviderAddTemplate::Vidai => None,
         ProviderAddTemplate::Custom
         | ProviderAddTemplate::ClaudeOfficial
         | ProviderAddTemplate::CodexOauth
@@ -509,7 +518,8 @@ fn template_default_icon_color(template: ProviderAddTemplate) -> Option<&'static
         | ProviderAddTemplate::Openmodel
         | ProviderAddTemplate::Dds
         | ProviderAddTemplate::Qiniu
-        | ProviderAddTemplate::Fenno => None,
+        | ProviderAddTemplate::Fenno
+        | ProviderAddTemplate::Vidai => None,
     }
 }
 
@@ -539,7 +549,8 @@ fn build_provider_template_settings_config(
         | ProviderAddTemplate::Openmodel
         | ProviderAddTemplate::Dds
         | ProviderAddTemplate::Qiniu
-        | ProviderAddTemplate::Fenno => build_sponsor_template_settings_config(
+        | ProviderAddTemplate::Fenno
+        | ProviderAddTemplate::Vidai => build_sponsor_template_settings_config(
             app_type,
             sponsor_preset(template).ok_or_else(|| unsupported_template_error(template))?,
         ),
@@ -1192,6 +1203,7 @@ requires_openai_auth = true
                 "* ClaudeAPI",
                 "* Qiniu",
                 "* FennoAI",
+                "* VidAI",
             ]
         );
         assert_eq!(
@@ -1209,6 +1221,7 @@ requires_openai_auth = true
                 "* AICodeMirror",
                 "* Qiniu",
                 "* FennoAI",
+                "* VidAI",
                 "DeepSeek",
             ]
         );
