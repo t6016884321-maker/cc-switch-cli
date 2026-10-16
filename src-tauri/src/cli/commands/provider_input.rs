@@ -13,7 +13,8 @@ use crate::provider::{AuthBinding, AuthBindingSource, ClaudeApiKeyField, Provide
 use crate::provider_preset_builtin::{builtin_provider_preset_value, BuiltinProviderPresetId};
 use crate::provider_preset_models::{
     codex_oauth_claude_env, sponsor_hermes_models, sponsor_model_family, sponsor_openclaw_models,
-    sponsor_opencode_settings, SponsorModelFamily, CODEX_DEFAULT_MODEL, GEMINI_DEFAULT_MODEL,
+    sponsor_opencode_settings, SponsorModelFamily, CODEX_DEFAULT_MODEL, CODEX_OAUTH_FAST_MODEL,
+    GEMINI_DEFAULT_MODEL,
 };
 use crate::provider_preset_sponsors::{
     sponsor_provider_preset, sponsor_provider_presets_for_app, SponsorProviderPreset,
@@ -583,10 +584,15 @@ fn build_sponsor_template_settings_config(
             } else {
                 preset.provider_name
             };
+            let model = if preset.id == "vidai" {
+                CODEX_OAUTH_FAST_MODEL
+            } else {
+                CODEX_DEFAULT_MODEL
+            };
             Ok(build_codex_settings_config(
                 None,
                 preset.codex_base_url,
-                CODEX_DEFAULT_MODEL,
+                model,
                 "responses",
                 provider_name,
             ))
@@ -2017,6 +2023,19 @@ requires_openai_auth = true
                 .and_then(|meta| meta.partner_promotion_key.as_deref()),
             Some("cubence")
         );
+    }
+
+    #[test]
+    fn vidai_codex_template_uses_current_verified_model() {
+        let provider =
+            build_provider_template_seed(&AppType::Codex, ProviderAddTemplate::Vidai, &[])
+                .expect("build VidAI Codex provider");
+        let config = provider.settings_config["config"]
+            .as_str()
+            .expect("VidAI Codex config should be TOML");
+        assert!(config.contains("model = \"gpt-5.6-luna\""));
+        assert!(config.contains("base_url = \"https://api.david-ai.net/v1\""));
+        assert!(config.contains("wire_api = \"responses\""));
     }
 
     #[test]

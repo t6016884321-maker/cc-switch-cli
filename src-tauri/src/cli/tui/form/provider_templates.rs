@@ -772,6 +772,9 @@ impl ProviderAddFormState {
             AppType::Codex => {
                 self.reset_codex_template_state();
                 self.codex_base_url.set(preset.codex_base_url);
+                if preset.id == "vidai" {
+                    self.codex_model.set(CODEX_OAUTH_FAST_MODEL);
+                }
                 if preset.id == "patewayai" {
                     self.extra["settingsConfig"] = json!({
                         "config": crate::codex_config::build_codex_third_party_config_toml(
